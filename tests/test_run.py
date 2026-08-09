@@ -191,6 +191,56 @@ def test_injecagent_loader_refuses_a_positive_that_is_not_positive(tmp_path: Pat
         list(er.load_injecagent_base(tmp_path))
 
 
+def test_llmail_loader_keeps_only_api_triggered_attacks(tmp_path: Path) -> None:
+    (tmp_path / "labelled_unique_submissions_phase2.json").write_text(
+        json.dumps(
+            {
+                "attack that fired": {"attack_attempt": "True", "reason": "api_triggered"},
+                "attack a judge liked": {"attack_attempt": "True", "reason": "judge"},
+                "bool true also fired": {"attack_attempt": True, "reason": "api_triggered"},
+                "unclear but fired": {"attack_attempt": "Unclear", "reason": "api_triggered"},
+                "true but no effect": {"attack_attempt": "True", "reason": "no_trigger"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "emails_for_fp_tests.json").write_text(
+        json.dumps(["benign email one", "benign email two"]), encoding="utf-8"
+    )
+    samples = list(er.load_llmail_inject(tmp_path))
+    positives = [s for s in samples if s.positive]
+    negatives = [s for s in samples if not s.positive]
+    # A judge's label is a claim; api_triggered is a measurement. Only the
+    # measurements are positives.
+    assert {s.text for s in positives} == {"attack that fired", "bool true also fired"}
+    assert [s.text for s in negatives] == ["benign email one", "benign email two"]
+    assert all(s.group == "clean email" for s in negatives)
+
+
+def test_llmail_groups_describe_obfuscation_mechanically(tmp_path: Path) -> None:
+    (tmp_path / "labelled_unique_submissions_phase2.json").write_text(
+        json.dumps(
+            {
+                "plain attack text": {"attack_attempt": "True", "reason": "api_triggered"},
+                "zero​width attack": {"attack_attempt": "True", "reason": "api_triggered"},
+                "ｆｕｌｌｗｉｄｔｈ attack": {"attack_attempt": "True", "reason": "api_triggered"},
+                "attaque accentuée": {"attack_attempt": "True", "reason": "api_triggered"},
+                "日本語の攻撃": {"attack_attempt": "True", "reason": "api_triggered"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "emails_for_fp_tests.json").write_text("[]", encoding="utf-8")
+    groups = {s.text: s.group for s in er.load_llmail_inject(tmp_path)}
+    assert groups["plain attack text"] == "plain ASCII"
+    assert groups["zero​width attack"] == "zero-width characters"
+    assert groups["ｆｕｌｌｗｉｄｔｈ attack"] == "fullwidth forms"
+    assert groups["attaque accentuée"] == "other non-ASCII"
+    # CJK ideographs are not fullwidth forms; the bucket boundary must not
+    # swallow ordinary multilingual text.
+    assert groups["日本語の攻撃"] == "other non-ASCII"
+
+
 def test_notinject_loader_is_entirely_negative(tmp_path: Path) -> None:
     for split in ("one", "two", "three"):
         (tmp_path / f"NotInject_{split}.json").write_text(

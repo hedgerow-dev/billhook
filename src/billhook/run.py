@@ -251,6 +251,57 @@ def load_injecagent_base(root: Path) -> Iterator[Sample]:
                 yield Sample(text=clean, positive=False, group=f"{split}/clean template")
 
 
+_ZERO_WIDTH = frozenset("​‌‍⁠﻿")
+
+
+def _llmail_group(text: str) -> str:
+    """A mechanical obfuscation bucket for one LLMail submission.
+
+    These groups *describe* the corpus for the per-group breakdown; nothing
+    here is fed back into a rule set (OT-RUL-006). Zero-width characters and
+    fullwidth forms are the two dominant obfuscation vehicles in the
+    challenge data; everything else splits on whether it is plain ASCII.
+    """
+    if any(ch in _ZERO_WIDTH for ch in text):
+        return "zero-width characters"
+    # U+FF01..U+FF5E fullwidth ASCII forms, plus U+3000 ideographic space.
+    # Deliberately NOT a range from U+3000 to U+FF5F: that would span the
+    # CJK ideograph blocks and misbucket ordinary multilingual text.
+    if any("！" <= ch <= "～" or ch == "　" for ch in text):
+        return "fullwidth forms"
+    if any(ord(ch) > 127 for ch in text):
+        return "other non-ASCII"
+    return "plain ASCII"
+
+
+def load_llmail_inject(root: Path) -> Iterator[Sample]:
+    """LLMail-Inject phase 2: real attacks submitted against a live defence.
+
+    Positives are submissions that actually fired the target tool call -
+    `attack_attempt` true with `reason == "api_triggered"` - not the larger
+    judge-labelled set, whose labels are an LLM's opinion rather than an
+    observed effect. The fetch pin note fixes this selection; a label is a
+    claim, an api_triggered record is a measurement.
+
+    Negatives are the 203 benign emails in emails_for_fp_tests.json, written
+    for false-positive testing and sourced independently of BIPIA's 50, which
+    is what lets this suite separate "FPR on business email" from "FPR on
+    BIPIA's emails in particular".
+
+    Recall here is NOT comparable to BIPIA's and the two must not be pooled:
+    these attacks were written by people adapting to live defences, so the
+    corpus is harder where attackers try and easier where they rely on
+    obfuscation a static corpus never attempts.
+    """
+    submissions = _read_json(root / "labelled_unique_submissions_phase2.json")
+    for text, meta in submissions.items():
+        attempt = str(meta.get("attack_attempt", "")).strip().lower() == "true"
+        if attempt and meta.get("reason") == "api_triggered":
+            yield Sample(text=text, positive=True, group=_llmail_group(text))
+    for email in _read_json(root / "emails_for_fp_tests.json"):
+        yield Sample(text=email, positive=False, group="clean email")
+
+
 def load_notinject(root: Path) -> Iterator[Sample]:
     """NotInject: 339 benign prompts built *around* injection trigger words.
 
@@ -373,6 +424,27 @@ SUITES: dict[str, Suite] = {
         # a general benign FPR is printed beside it as well (OT-EVL-004).
         fpr_companion="dolly-context",
     ),
+    "llmail-inject": Suite(
+        name="llmail-inject",
+        dataset="llmail-inject",
+        surface=TOOL_RESULT,
+        construction=(
+            "Positives: the submission texts in labelled_unique_submissions_phase2.json "
+            "whose `attack_attempt` is true and whose `reason` is `api_triggered` "
+            "(the attack was observed to fire the tool call; judge-labelled records "
+            "are excluded). Negatives: all 203 emails in emails_for_fp_tests.json. "
+            "Scanned as tool-result content, the surface an email assistant's "
+            "retrieved mail arrives on."
+        ),
+        what_this_measures=(
+            "Whether the detector flags real, adaptive injection attacks written by "
+            "competitors against a live email-assistant defence. Recall here is not "
+            "comparable to BIPIA's static templates and the two are never pooled: "
+            "this corpus is harder where attackers use novel phrasing and easier "
+            "where they rely on obfuscation. Detection is not attack success."
+        ),
+        loader=load_llmail_inject,
+    ),
     "notinject": Suite(
         name="notinject",
         dataset="notinject",
@@ -452,7 +524,7 @@ SUITES: dict[str, Suite] = {
 #: reporting hazard, so the default set is not a selection.
 SUITE_SETS: dict[str, tuple[str, ...]] = {
     "v0_1": tuple(SUITES),
-    "attack": ("bipia", "injecagent-base"),
+    "attack": ("bipia", "injecagent-base", "llmail-inject"),
     "benign": ("notinject", "jailbreakbench", "dolly-prompt", "dolly-context"),
 }
 
