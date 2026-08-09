@@ -143,6 +143,62 @@ class TestHonestyProperties:
         table = render([run], (0.05,), None)
         assert "deterministic" in table and "offline" in table
 
+    def test_an_unloadable_detector_appears_in_the_table(self) -> None:
+        """OT-BCH-006: 'not run' has to survive into the published artifact.
+
+        Reporting it only on stderr left the committed table looking as though
+        the detector had never been asked.
+        """
+        run = run_detector(RegexFloorDetector(), _samples(["p"], ["n"]),
+                           "prompt", "s")
+        table = render([run], (0.05,), None,
+                       [("llm-guard:PromptInjection", "pip install llm-guard")])
+        assert "Not run" in table
+        assert "llm-guard:PromptInjection" in table
+        assert "pip install llm-guard" in table
+
+
+class TestThresholdBasis:
+    """The negatives a threshold was read off are part of the number."""
+
+    def test_a_shared_benign_suite_sets_the_threshold(self) -> None:
+        """SPEC-010 §5 matches the operating point on NotInject, not on BIPIA."""
+        attack = run_detector(
+            _Scored({"p": 0.6, "n": 0.9}),
+            _samples(["p"], ["n"]), "tool_result", "attack",
+        )
+        # The benign corpus puts every negative below the positive, so matching
+        # there admits p; matching on the attack suite's own negative does not.
+        benign = run_detector(
+            _Scored({f"b{i}": i / 200 for i in range(100)}),
+            _samples([], [f"b{i}" for i in range(100)]), "prompt", "benign",
+        )
+        benign.detector = attack.detector
+
+        own = render([attack], (0.05,), None)
+        shared = render([attack, benign], (0.05,), {attack.detector: benign})
+        assert "| 0.0% |" in own
+        assert "| 100.0% |" in shared
+
+    def test_a_thin_negative_basis_is_declared(self) -> None:
+        """50 clean emails cannot express a 1% FPR, and the table must say so."""
+        run = run_detector(
+            _Scored({f"n{i}": i / 50 for i in range(50)} | {"p": 1.0}),
+            _samples(["p"], [f"n{i}" for i in range(50)]), "tool_result", "bipia",
+        )
+        table = render([run], (0.01,), None)
+        assert "50 negatives from `bipia`" in table
+        assert "finer than 2.0%" in table
+
+    def test_an_adequate_basis_carries_no_warning(self) -> None:
+        run = run_detector(
+            _Scored({f"n{i}": i / 200 for i in range(200)} | {"p": 1.0}),
+            _samples(["p"], [f"n{i}" for i in range(200)]), "prompt", "big",
+        )
+        table = render([run], (0.05,), None)
+        assert "200 negatives from `big`" in table
+        assert "finer than" not in table
+
 
 class TestRegexFloor:
     """OT-BCH-005: the baseline every other tool must clear."""

@@ -155,3 +155,33 @@ def test_main_list_runs_without_network(capsys) -> None:
     assert ef.main(["--list"]) == 0
     out = capsys.readouterr().out
     assert "bipia" in out and "NOT PINNED" in out
+
+
+def test_main_fetches_every_name_it_is_given(local_dataset, tmp_path: Path, capsys) -> None:
+    """The documented quick start passes --fetch twice, and both must arrive.
+
+    A non-repeatable flag silently kept only the last name, so the corpus the
+    next command needed was never downloaded.
+    """
+    dataset, source, digest, payload = local_dataset
+    second = ef.Dataset(
+        name="synthetic-two",
+        homepage="https://example.com/synthetic-two",
+        applies="test double",
+        licence="CC0",
+        files=(ef.PinnedFile(url=source.as_uri(), name="source.jsonl", sha256=digest),),
+    )
+    ef.DATASETS["synthetic-two"] = second
+    dest = tmp_path / "datasets"
+    try:
+        argv = ["--fetch", "synthetic", "--fetch", "synthetic-two", "--dest", str(dest)]
+        assert ef.main(argv) == 0
+    finally:
+        del ef.DATASETS["synthetic-two"]
+    assert (dest / "synthetic" / "source.jsonl").read_bytes() == payload
+    assert (dest / "synthetic-two" / "source.jsonl").read_bytes() == payload
+
+
+def test_main_reports_an_unknown_dataset_before_touching_the_network(capsys) -> None:
+    assert ef.main(["--fetch", "no-such-dataset"]) == 2
+    assert "unknown dataset 'no-such-dataset'" in capsys.readouterr().err

@@ -498,8 +498,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         description="Fetch checksum-pinned evaluation datasets (OT-EVL-008).",
     )
     parser.add_argument("--list", action="store_true")
-    parser.add_argument("--fetch", metavar="NAME")
-    parser.add_argument("--verify", metavar="NAME")
+    parser.add_argument("--fetch", metavar="NAME", action="append", default=[])
+    parser.add_argument("--verify", metavar="NAME", action="append", default=[])
     parser.add_argument("--pin", metavar="NAME")
     parser.add_argument("--dest", type=Path, default=DEFAULT_DEST)
     parser.add_argument("--force", action="store_true")
@@ -516,21 +516,23 @@ def main(argv: Sequence[str] | None = None) -> int:
             print()
         return 0
 
+    for name in (*args.fetch, *args.verify, *([args.pin] if args.pin else [])):
+        if name not in DATASETS:
+            print(f"unknown dataset {name!r}; try --list", file=sys.stderr)
+            return 2
+
     try:
         if args.pin:
             return pin(args.pin)
         if args.verify:
-            problems = verify(args.verify, args.dest)
+            problems = [p for name in args.verify for p in verify(name, args.dest)]
             for problem in problems:
                 print(problem, file=sys.stderr)
             return 1 if problems else 0
-        paths = fetch(args.fetch, args.dest, force=args.force)
-        for path in paths:
-            print(path)
+        for name in args.fetch:
+            for path in fetch(name, args.dest, force=args.force):
+                print(path)
         return 0
-    except KeyError:
-        print("unknown dataset; try --list", file=sys.stderr)
-        return 2
     except (UnpinnedDataset, ChecksumMismatch, RuntimeError) as exc:
         print(exc, file=sys.stderr)
         return 1

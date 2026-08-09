@@ -80,7 +80,6 @@ __all__ = [
     "ARTIFACT_SCHEMA",
     "RESULTS_DIR",
     "SUITES",
-    "DirtyTree",
     "Sample",
     "Suite",
     "SuiteResult",
@@ -105,10 +104,6 @@ PROMPT = "prompt"
 TOOL_RESULT = "tool_result"
 
 _LATENCY_PERCENTILES = (50, 95, 99)
-
-
-class DirtyTree(RuntimeError):
-    """OT-EVL-002: a result from a dirty working tree is not a release artifact."""
 
 
 # ---------------------------------------------------------------------------
