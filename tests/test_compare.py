@@ -188,19 +188,26 @@ class TestRegistry:
 class TestImportPurity:
     """OT-BCH-009: adapters must not drag heavy deps into the core."""
 
-    def test_importing_detectors_does_not_import_torch(self) -> None:
+    def test_importing_the_harness_pulls_in_no_detector_backend(self) -> None:
+        """`import billhook` must pull neither torch nor any tool it scores.
+
+        open-thicket is in the list on purpose. It is the adapter most likely to
+        creep back into the import path, and a referee that loads one of its
+        own subjects on import has stopped being independent of it.
+        """
         import subprocess
         import sys
 
+        heavy = ("torch", "transformers", "llm_guard", "thicket")
         code = (
-            "import sys, billhook.detectors as d; "
-            "d.load('regex-floor'); "
-            "print('torch' in sys.modules or 'transformers' in sys.modules)"
+            "import sys, billhook, billhook.run, billhook.compare; "
+            "import billhook.detectors as d; d.load('regex-floor'); "
+            f"print([m for m in {heavy!r} if m in sys.modules])"
         )
         out = subprocess.run([sys.executable, "-c", code], capture_output=True,
                              text=True)
         assert out.returncode == 0, out.stderr
-        assert out.stdout.strip() == "False"
+        assert out.stdout.strip() == "[]", f"leaked into sys.modules: {out.stdout}"
 
 
 class TestStandsAloneWithoutThicket:

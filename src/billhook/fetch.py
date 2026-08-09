@@ -96,7 +96,7 @@ class Dataset:
     """A fetchable evaluation corpus.
 
     Attributes:
-        applies: Why this corpus measures *our* capability, per SPEC-010 §4.
+        applies: Why this corpus measures injection detection, per SPEC-010 §4.
             Datasets that measure a different capability are not listed here at
             all, running a harmful-content benchmark against an injection
             detector measures the wrong thing (SPEC-010 §4).
@@ -122,7 +122,7 @@ DATASETS: dict[str, Dataset] = {
         name="bipia",
         homepage="https://github.com/microsoft/BIPIA",
         applies=(
-            "Indirect injection in a real QA context. SPEC-010 §4 names this our "
+            "Indirect injection in a real QA context. SPEC-010 §4 names this the "
             "primary honest measure."
         ),
         licence="NOASSERTION (GitHub's licence detector finds no SPDX licence file)",

@@ -98,15 +98,15 @@ table must say so rather than quietly comparing incomparable things.
 | `thicket+normalize` | deterministic | offline | Any detector wrapped in our normalization, to measure preprocessing lift separately from detection. |
 
 ```
-OT-BCH-009 MUST keep every adapter optional at import. `import thicket` must
-  not import torch, transformers, or llm_guard.
+OT-BCH-009 MUST keep every adapter optional at import. `import billhook` must
+  not import torch, transformers, llm_guard, or thicket.
   Verify: unit
 OT-BCH-012 MUST ship the harness inside the installed distribution. A user who
-  runs `pip install open-thicket` MUST be able to run the documented compare
-  command with no source checkout.
+  runs `pip install billhook` MUST be able to run the documented compare
+  command with no source checkout and no extras.
   Verify: integration (installed-wheel smoke test)
 OT-BCH-013 MUST NOT occupy a generic top-level import name. The harness lives
-  under `thicket.bench`, not `evals`.
+  under `billhook`, not `evals` or `bench`.
   Verify: unit
 ```
 
@@ -117,9 +117,11 @@ installed the package. This is the same failure the predecessor project shipped 
 a documented quick start that only works from a checkout, and it is precisely
 what the installed-wheel gate in SPEC-009 exists to catch.
 
-`OT-BCH-013` is the reason the fix is a move rather than an added include.
+`OT-BCH-013` is the reason the fix was a move rather than an added include.
 Installing a top-level `evals` package into a user's `site-packages` would
-collide with any other project using that entirely generic name.
+collide with any other project using that entirely generic name. `billhook` is
+distinctive enough to sit at top level, which is why the harness no longer
+needs to hide inside another project's namespace.
 
 ## 5. What this harness will not do
 

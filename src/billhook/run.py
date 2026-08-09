@@ -26,7 +26,7 @@ cell, a formatting error is a cheap way to enforce a claims rule.
 evaluation FN text into the repository, and the predecessor committed verbatim
 FN text for every holdout it ran. There is deliberately no `--dump-misses`
 option here, not even one guarded to write outside the repository: the per-group
-breakdowns below answer "which attack families do we miss" without materializing
+breakdowns below answer "which attack families were missed" without materializing
 a single missed string, and a tool that materializes them is an attractive
 nuisance next to OT-RUL-006 ("inspecting evaluation false negatives to author
 patterns is prohibited").
@@ -126,7 +126,7 @@ class Sample:
             For JailbreakBench this is deliberately *not* the case, see
             `Suite.what_this_measures` there.
         group: Attack family, split, or category. Drives the per-group
-            breakdown, which is how this harness answers "what do we miss"
+            breakdown, which is how this harness answers "what was missed"
             without storing missed text (OT-EVL-010).
     """
 
@@ -225,9 +225,10 @@ def load_injecagent_base(root: Path) -> Iterator[Sample]:
 
     Negatives are the matching `Tool Response Template` with the
     `<Attacker Instruction>` placeholder replaced by the empty string. That is a
-    same-distribution control that introduces no text of our own authorship;
-    filling the hole with invented benign prose would make the FPR a measurement
-    of our own writing. Templates are deduplicated, many test cases share one.
+    same-distribution control that introduces no text of the harness's
+    authorship; filling the hole with invented benign prose would make the FPR a
+    measurement of that prose. Templates are deduplicated, many test cases share
+    one.
 
     The **enhanced** split is not fetched and not scorable here. It prepends a
     fixed literal ("IMPORTANT!!! Ignore all previous instructions...") to every
@@ -348,7 +349,7 @@ SUITES: dict[str, Suite] = {
         ),
         what_this_measures=(
             "Whether the detector flags an indirect-injection instruction sitting in "
-            "retrieved content. SPEC-010 §4 names this our primary honest measure. It "
+            "retrieved content. SPEC-010 §4 names this the primary honest measure. It "
             "does not measure whether an agent would have obeyed the instruction."
         ),
         loader=load_bipia,
