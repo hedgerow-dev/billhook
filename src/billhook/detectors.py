@@ -10,12 +10,25 @@ anyone can wrap their own tool in an afternoon and get a comparable number.
 
 Adapters that need torch, transformers, or llm_guard import them lazily inside
 `load()`, never at module scope (OT-BCH-009).
+
+The Lakera adapter implements the current documented `/v2/guard` shape from
+https://docs.lakera.ai/api-reference/lakera-api/guard/screen-content (fetched
+2026-08-09): POST {"messages": [{"role": "user", "content": text}]} with a
+Bearer key, response {"flagged": bool, "breakdown": [{"detected": bool,
+"result": "l1_confident" .. "l5_unlikely"}]}. The earlier
+{"results": [{"categories": ..., "category_scores": ...}]} shape is not the
+documented one; a continuous score is read from it only if a server ever
+returns it.
 """
 from __future__ import annotations
 
+import json
+import os
 import re
+import urllib.error
+import urllib.request
 from dataclasses import dataclass
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 PROMPT = "prompt"
 TOOL_RESULT = "tool_result"
@@ -264,6 +277,143 @@ class LLMGuardDetector:
 
 
 # --------------------------------------------------------------------------
+# lakera:guard, the hosted adapter (network + API key)
+# --------------------------------------------------------------------------
+
+_LAKERA_URL = "https://api.lakera.ai/v2/guard"
+_LAKERA_TIMEOUT_S = 30.0
+_LAKERA_ENV_KEYS = ("BILLHOOK_LAKERA_API_KEY", "LAKERA_API_KEY")
+_LAKERA_USER_AGENT = "billhook/0.1 (+https://github.com/hedgerow-dev/billhook)"
+
+
+class LakeraDetector:
+    """Lakera Guard over HTTP, the first `network+key` adapter.
+
+    Every scan is a network call carrying corpus text to a third party. That
+    cost is the entire reason `requires = "network+key"` exists as a category,
+    and it is why this adapter can never be in the default comparison: recall
+    that ships every prompt to a vendor's server is not comparable to recall
+    that runs air-gapped.
+
+    The documented response carries no continuous score: `flagged` is a
+    boolean and the optional `breakdown` reports a confidence *level*
+    (`l1_confident` .. `l5_unlikely`), not a probability. Mapping those labels
+    to numbers would invent the signal OT-BCH-001 requires measured, so this
+    detector reports `score=None` and appears in the table at its own
+    operating point, marked (OT-BCH-008). If a server ever returns the legacy
+    `category_scores` shape with a real score, it is used.
+
+    Shape source: https://docs.lakera.ai/api-reference/lakera-api/guard/screen-content
+    (fetched 2026-08-09).
+    """
+
+    kind = "hosted"
+    requires = "network+key"
+
+    def __init__(self) -> None:
+        key = next(
+            (os.environ[k] for k in _LAKERA_ENV_KEYS if os.environ.get(k)), ""
+        )
+        if not key:
+            raise AdapterUnavailable(
+                "lakera:guard needs an API key. Set BILLHOOK_LAKERA_API_KEY "
+                "(or LAKERA_API_KEY) in the environment; generate one from "
+                "the AI Guardrails dashboard."
+            )
+        # Held only to go into one Authorization header. Never formatted into
+        # a string, an exception, or a repr, anywhere in this class.
+        self._key = key
+        self.name = "lakera:guard"
+        self.version = _LAKERA_URL.split("api.lakera.ai/", 1)[1]
+
+    def scan(self, text: str, surface: str) -> Judgement:
+        request = urllib.request.Request(
+            _LAKERA_URL,
+            data=json.dumps({
+                "messages": [{"role": "user", "content": text}],
+                "breakdown": True,
+            }).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {self._key}",
+                "Content-Type": "application/json",
+                "User-Agent": _LAKERA_USER_AGENT,
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=_LAKERA_TIMEOUT_S) as resp:
+                body: Any = json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            detail = f"HTTP {exc.code}"
+            excerpt = self._body_excerpt(exc, text)
+            if excerpt:
+                detail = f"{detail}: {excerpt}"
+            return Judgement(detected=False, score=None, error=f"lakera:guard {detail}")
+        except urllib.error.URLError as exc:
+            return Judgement(
+                detected=False, score=None,
+                error=f"lakera:guard request failed: {exc.reason}",
+            )
+        except (TimeoutError, OSError) as exc:
+            return Judgement(
+                detected=False, score=None,
+                error=f"lakera:guard request failed: {type(exc).__name__}",
+            )
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return Judgement(
+                detected=False, score=None,
+                error="lakera:guard returned a non-JSON response",
+            )
+        if not isinstance(body, dict):
+            return Judgement(
+                detected=False, score=None,
+                error="lakera:guard returned an unexpected response shape",
+            )
+        detected = bool(body.get("flagged"))
+        breakdown = body.get("breakdown")
+        if isinstance(breakdown, list):
+            detected = detected or any(
+                isinstance(entry, dict) and bool(entry.get("detected"))
+                for entry in breakdown
+            )
+        return Judgement(detected=detected, score=_lakera_score(body))
+
+    def _body_excerpt(self, exc: urllib.error.HTTPError, text: str) -> str | None:
+        """~200 chars of an error body, only when it can leak nothing.
+
+        The key travels in a header, never the body, and the scanned text is
+        corpus material that must not land in a result artifact's error field;
+        an excerpt containing either is dropped whole.
+        """
+        try:
+            raw = exc.read(512).decode("utf-8", errors="replace")[:200].strip()
+        except OSError:
+            return None
+        if not raw or self._key in raw or (text and text in raw):
+            return None
+        return raw
+
+
+def _lakera_score(body: dict[str, Any]) -> float | None:
+    """A continuous score if the response carries one, else None.
+
+    The documented `/v2/guard` response has none; this only honours the legacy
+    `results[].category_scores.prompt_injection` shape should it appear.
+    """
+    results = body.get("results")
+    if isinstance(results, list):
+        for entry in results:
+            if not isinstance(entry, dict):
+                continue
+            scores = entry.get("category_scores")
+            if isinstance(scores, dict):
+                value = scores.get("prompt_injection")
+                if isinstance(value, int | float):
+                    return float(value)
+    return None
+
+
+# --------------------------------------------------------------------------
 # registry
 # --------------------------------------------------------------------------
 
@@ -276,6 +426,7 @@ def load(spec: str) -> Detector:
         regex-floor
         huggingface:protectai/deberta-v3-base-prompt-injection-v2
         llm-guard:PromptInjection
+        lakera  (or lakera:guard)
         normalize+<any of the above>
 
     Raises AdapterUnavailable with an actionable message rather than
@@ -292,9 +443,11 @@ def load(spec: str) -> Detector:
         return HuggingFaceDetector(spec.split(":", 1)[1])
     if spec.startswith("llm-guard:"):
         return LLMGuardDetector(spec.split(":", 1)[1])
+    if spec in ("lakera", "lakera:guard"):
+        return LakeraDetector()
     raise AdapterUnavailable(
         f"unknown detector {spec!r}. Known: thicket, regex-floor, "
-        f"huggingface:<model>, llm-guard:<scanner>, normalize+<spec>"
+        f"huggingface:<model>, llm-guard:<scanner>, lakera[:guard], normalize+<spec>"
     )
 
 

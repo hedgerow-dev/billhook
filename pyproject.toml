@@ -33,6 +33,10 @@ dependencies = []
 thicket = ["open-thicket>=0.1"]
 hf = ["torch>=2.0", "transformers>=4.40", "sentencepiece>=0.2"]
 llm-guard = ["llm-guard>=0.3"]
+# What `evals/experiments/` needs: a HF backend plus pyarrow for
+# trigger_label_association.py, which reads training-corpus parquet. Two scripts
+# (ensemble_independence, deobfuscation_lift) also want the `thicket` extra.
+experiments = ["torch>=2.0", "transformers>=4.40", "sentencepiece>=0.2", "pyarrow>=15"]
 dev = [
   "pytest>=8",
   "ruff>=0.6",
@@ -53,6 +57,11 @@ target-version = "py310"
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "SIM", "UP"]
 
+# The research scripts under evals/experiments/ are read top to bottom and use a
+# few loop and single-char-name idioms the library code does not.
+[tool.ruff.lint.per-file-ignores]
+"evals/experiments/*.py" = ["B007", "B023", "SIM115", "E741"]
+
 [tool.mypy]
 python_version = "3.10"
 strict = true
@@ -67,7 +76,16 @@ module = [
   "torch", "torch.*",
   "transformers", "transformers.*",
   "llm_guard", "llm_guard.*",
+  "pyarrow", "pyarrow.*",
 ]
+ignore_missing_imports = true
+
+# CI type-checks src/ only. The research scripts under evals/experiments/ drive
+# the harness as a library and are not part of the type gate, matching how they
+# were checked before the move.
+[[tool.mypy.overrides]]
+module = ["numpy.*", "yaml.*"]
+follow_imports = "skip"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

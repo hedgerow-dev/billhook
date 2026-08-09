@@ -1,0 +1,67 @@
+name: benchmark
+
+on:
+  schedule:
+    - cron: "0 6 * * 0" # Sunday 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: benchmark
+  cancel-in-progress: false
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e .
+
+      # Pins live in fetch.py, so unchanged pins reuse the datasets.
+      - uses: actions/cache@v4
+        with:
+          path: evals/datasets/
+          key: datasets-${{ hashFiles('src/billhook/fetch.py') }}
+
+      - name: Fetch pinned datasets
+        run: >-
+          python -m billhook.fetch
+          --fetch bipia
+          --fetch injecagent-base
+          --fetch notinject
+          --fetch jailbreakbench
+          --fetch dolly15k
+
+      # --release refuses a dirty tree, so the runs must precede any step that
+      # modifies files, including the commit-back below.
+      - name: Run benchmark
+        run: python -m billhook.run --suite v0_1 --detector regex-floor --release
+
+      - name: Run comparison
+        run: python -m billhook.compare --suite v0_1 --detector regex-floor --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: evals/results/
+          retention-days: 90
+
+      # Committed artifacts are what OT-EVL-001 permits citing; they exist only
+      # because the steps above ran on the pristine checkout first.
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evals/results/
+          if git diff --cached --quiet; then
+            echo "No new results to commit."
+            exit 0
+          fi
+          git commit -m "benchmark: weekly v0_1 results"
+          git push

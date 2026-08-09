@@ -1,0 +1,688 @@
+{
+  "schema": "open-thicket/eval-result/1",
+  "requirements": [
+    "OT-EVL-001",
+    "OT-EVL-002",
+    "OT-EVL-003",
+    "OT-EVL-004",
+    "OT-EVL-005",
+    "OT-EVL-008",
+    "OT-EVL-009",
+    "OT-EVL-011"
+  ],
+  "generated_utc": "2026-08-01T11:22:09+00:00",
+  "command": "python -m evals.run --suite benign",
+  "git": {
+    "sha": "c1008bf7083a2b39fb19295b923c541ba7bd9702",
+    "branch": "main",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "environment": {
+    "python": "3.14.6",
+    "implementation": "CPython",
+    "system": "Darwin",
+    "release": "25.5.0",
+    "machine": "arm64",
+    "processor": "arm",
+    "is_reference_environment": false,
+    "reference_environment_spec": "SPEC-003 §6.1: ubuntu-latest, x86_64, single process",
+    "latency_publishable": false,
+    "latency_note": "NOT the SPEC-003 §6.1 reference environment. Under OT-ENG-019 the latency fields in this artifact are a development signal and are not publishable. The detection counts are unaffected: they are deterministic and environment-independent."
+  },
+  "ruleset": {
+    "hash": "sha256:8eede3ff126a98cde3d56bd5335cf12270cc0829c5750a8f84a624cc7534c4c4",
+    "origin": "thicket.rules/starter.yaml",
+    "n_rules": 57,
+    "n_enabled": 56
+  },
+  "engine_config": {
+    "max_scan_chars": 16384,
+    "oversize_policy": "chunk",
+    "min_severity": "LOW",
+    "score_threshold": 0.4,
+    "enable_heuristics": true,
+    "enable_obfuscation_variants": true,
+    "tier2_threshold": 0.4,
+    "tool_result_threshold": 0.55
+  },
+  "what_this_measures": "Whether the engine emits a detection on a piece of text. It does not run an agent and does not call a model, so it does not measure attack success or attack prevention. AgentDojo is deliberately absent: SPEC-010 §4 admits it only if actually run end to end.",
+  "publication_blockers": [
+    "OT-ENG-019: latency fields were not measured on the SPEC-003 §6.1 reference environment and are not publishable. Detection counts are."
+  ],
+  "publishable": false,
+  "suites": [
+    {
+      "suite": "notinject",
+      "surface": "prompt",
+      "dataset": "notinject",
+      "dataset_files": [
+        {
+          "name": "NotInject_one.json",
+          "sha256": "69b535596d95102424e9c5946944feb4f2d596687eb8213f2ecad75478e5ffdd",
+          "size_bytes": 26117,
+          "url": "https://raw.githubusercontent.com/SaFoLab-WISC/InjecGuard/1b5751e88bf7475acbedfc8eda795ce060307c84/datasets/NotInject_one.json"
+        },
+        {
+          "name": "NotInject_two.json",
+          "sha256": "6043d94e75b48d8e7682d25dc79eaf45359e1e561ce520e3b8fd5625a91060c6",
+          "size_bytes": 29902,
+          "url": "https://raw.githubusercontent.com/SaFoLab-WISC/InjecGuard/1b5751e88bf7475acbedfc8eda795ce060307c84/datasets/NotInject_two.json"
+        },
+        {
+          "name": "NotInject_three.json",
+          "sha256": "ef01eff0d761d2e34571b3fdbcec08c30cd93efe8d0e1a2eb5c2baeb1873b070",
+          "size_bytes": 35765,
+          "url": "https://raw.githubusercontent.com/SaFoLab-WISC/InjecGuard/1b5751e88bf7475acbedfc8eda795ce060307c84/datasets/NotInject_three.json"
+        }
+      ],
+      "dataset_sha256": "e20d6a2b51e94393e9f9c5e2c4d9033929546584b253c8f2a7d4272688c4829e",
+      "construction": "All 339 rows of the NotInject one/two/three splits, `prompt` field, scanned via Engine.scan_prompt. Every row is benign by construction.",
+      "what_this_measures": "Over-defense: false positives on benign prompts deliberately loaded with one, two or three injection trigger words. This is the adversarial FPR measurement (SPEC-010 §4).",
+      "caveat": null,
+      "fpr_companion": null,
+      "n": 339,
+      "n_positive": 0,
+      "n_negative": 339,
+      "true_positive": 0,
+      "false_negative": 0,
+      "false_positive": 0,
+      "true_negative": 339,
+      "engine_errors": 0,
+      "recall": null,
+      "recall_ci95": null,
+      "fpr": 0.0,
+      "fpr_ci95": [
+        0.0,
+        0.011204767456969683
+      ],
+      "precision": null,
+      "precision_ci95": null,
+      "latency_ms": {
+        "n_scans": 339.0,
+        "mean": 0.6974155575252148,
+        "p50": 0.7722090012975968,
+        "p95": 1.3347910025913734,
+        "p99": 1.6235840012086555,
+        "max": 1.804874998924788
+      },
+      "total_seconds": 0.23653458400076488,
+      "groups": [
+        {
+          "group": "one trigger word(s) / Common Queries",
+          "n_positive": 0,
+          "n_negative": 58,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.062117855787202914
+          ]
+        },
+        {
+          "group": "one trigger word(s) / Multilingual",
+          "n_positive": 0,
+          "n_negative": 25,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            1.3877787807814457e-17,
+            0.13319225093904846
+          ]
+        },
+        {
+          "group": "one trigger word(s) / Technique Queries",
+          "n_positive": 0,
+          "n_negative": 16,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.1936076805344365
+          ]
+        },
+        {
+          "group": "one trigger word(s) / Virtual Creation",
+          "n_positive": 0,
+          "n_negative": 14,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            1.3877787807814457e-17,
+            0.2153108027376358
+          ]
+        },
+        {
+          "group": "three trigger word(s) / Common Queries",
+          "n_positive": 0,
+          "n_negative": 19,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.16817922405261626
+          ]
+        },
+        {
+          "group": "three trigger word(s) / Multilingual",
+          "n_positive": 0,
+          "n_negative": 29,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.11696979849974075
+          ]
+        },
+        {
+          "group": "three trigger word(s) / Technique Queries",
+          "n_positive": 0,
+          "n_negative": 41,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.08566757018443186
+          ]
+        },
+        {
+          "group": "three trigger word(s) / Virtual Creation",
+          "n_positive": 0,
+          "n_negative": 24,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            1.3877787807814457e-17,
+            0.13797620467498017
+          ]
+        },
+        {
+          "group": "two trigger word(s) / Common Queries",
+          "n_positive": 0,
+          "n_negative": 49,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            6.938893903907228e-18,
+            0.07269781922049637
+          ]
+        },
+        {
+          "group": "two trigger word(s) / Multilingual",
+          "n_positive": 0,
+          "n_negative": 30,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.11351339317396876
+          ]
+        },
+        {
+          "group": "two trigger word(s) / Technique Queries",
+          "n_positive": 0,
+          "n_negative": 30,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.11351339317396876
+          ]
+        },
+        {
+          "group": "two trigger word(s) / Virtual Creation",
+          "n_positive": 0,
+          "n_negative": 4,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.4898908364545973
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "jailbreakbench",
+      "surface": "prompt",
+      "dataset": "jailbreakbench",
+      "dataset_files": [
+        {
+          "name": "harmful-behaviors.csv",
+          "sha256": "4a8ec6832056b631eb092dccc60d37a61c3d441268268888b3d006288afeffa1",
+          "size_bytes": 23116,
+          "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors/resolve/886acc352a31533ffbcf4ef22c744658688086fc/data/harmful-behaviors.csv"
+        },
+        {
+          "name": "benign-behaviors.csv",
+          "sha256": "3cda234d21a991fa309bbfea4b6d9dae31ccdf8e9d452424b6a983e4fdc33468",
+          "size_bytes": 20570,
+          "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors/resolve/886acc352a31533ffbcf4ef22c744658688086fc/data/benign-behaviors.csv"
+        }
+      ],
+      "dataset_sha256": "9505b7b98faee16b459e3e67e5eb7d1667e9a276cfd8daf805b08205399499ce",
+      "construction": "All 200 rows of JBB-Behaviors (100 harmful + 100 matched benign), `Goal` field, scanned via Engine.scan_prompt. Both splits are scored as negatives — see `what_this_measures`.",
+      "what_this_measures": "A false-positive rate on harmful-content request goals. JBB behaviours are requests for harmful output, not injections: they contain no attempt to override a system prompt, hijack a tool, or exfiltrate context, and SPEC-003 §2 gives this engine no harmful-content category. The correct output on both splits is therefore 'no detection', and a recall figure here would be a metric for a capability the project does not claim. Reported rather than dropped, per OT-EVL-011.",
+      "caveat": "SPEC-010 §4 marks JailbreakBench ⚠️: it measures harmful-content classification, a different capability. Do not read this row as an injection-detection result.",
+      "fpr_companion": null,
+      "n": 200,
+      "n_positive": 0,
+      "n_negative": 200,
+      "true_positive": 0,
+      "false_negative": 0,
+      "false_positive": 0,
+      "true_negative": 200,
+      "engine_errors": 0,
+      "recall": null,
+      "recall_ci95": null,
+      "fpr": 0.0,
+      "fpr_ci95": [
+        0.0,
+        0.018845326377266575
+      ],
+      "precision": null,
+      "precision_ci95": null,
+      "latency_ms": {
+        "n_scans": 200.0,
+        "mean": 0.7303491850325372,
+        "p50": 0.6973750023462344,
+        "p95": 1.1078339994128328,
+        "p99": 1.3267920003272593,
+        "max": 1.4547089995176066
+      },
+      "total_seconds": 0.14613916700182017,
+      "groups": [
+        {
+          "group": "benign / Disinformation",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Economic harm",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Expert advice",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Fraud/Deception",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Government decision-making",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Harassment/Discrimination",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Malware/Hacking",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Physical harm",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Privacy",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Sexual/Adult content",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Disinformation",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Economic harm",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Expert advice",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Fraud/Deception",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Government decision-making",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Harassment/Discrimination",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Malware/Hacking",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Physical harm",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Privacy",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Sexual/Adult content",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "dolly-prompt",
+      "surface": "prompt",
+      "dataset": "dolly15k",
+      "dataset_files": [
+        {
+          "name": "databricks-dolly-15k.jsonl",
+          "sha256": "2df9083338b4abd6bceb5635764dab5d833b393b55759dffb0959b6fcbf794ec",
+          "size_bytes": 13085339,
+          "url": "https://huggingface.co/datasets/databricks/databricks-dolly-15k/resolve/bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a/databricks-dolly-15k.jsonl"
+        }
+      ],
+      "dataset_sha256": "5cd0719e3cbdcf251f9f836de0bbc931a755a54a0794589e5d082244923f0c3e",
+      "construction": "The non-empty `instruction` field of every record in databricks-dolly-15k.jsonl, scanned via Engine.scan_prompt.",
+      "what_this_measures": "False positives on ordinary human-written instructions — the base rate a deployment actually pays on the prompt surface. Attribution: databricks-dolly-15k, Databricks, CC BY-SA 3.0.",
+      "caveat": null,
+      "fpr_companion": null,
+      "n": 15011,
+      "n_positive": 0,
+      "n_negative": 15011,
+      "true_positive": 0,
+      "false_negative": 0,
+      "false_positive": 28,
+      "true_negative": 14983,
+      "engine_errors": 0,
+      "recall": null,
+      "recall_ci95": null,
+      "fpr": 0.001865298780894011,
+      "fpr_ci95": [
+        0.0012909047906898448,
+        0.00269458243438767
+      ],
+      "precision": null,
+      "precision_ci95": null,
+      "latency_ms": {
+        "n_scans": 15011.0,
+        "mean": 0.6104906321033252,
+        "p50": 0.5198750004637986,
+        "p95": 1.249166001798585,
+        "p99": 1.7408339990652166,
+        "max": 23.025167000014335
+      },
+      "total_seconds": 9.168037540999649,
+      "groups": [
+        {
+          "group": "brainstorming",
+          "n_positive": 0,
+          "n_negative": 1766,
+          "fpr": 0.0005662514156285391,
+          "fpr_ci95": [
+            9.996427336090717e-05,
+            0.003200590582318929
+          ]
+        },
+        {
+          "group": "classification",
+          "n_positive": 0,
+          "n_negative": 2136,
+          "fpr": 0.0009363295880149813,
+          "fpr_ci95": [
+            0.0002568129107097996,
+            0.00340769166666001
+          ]
+        },
+        {
+          "group": "closed_qa",
+          "n_positive": 0,
+          "n_negative": 1773,
+          "fpr": 0.00338409475465313,
+          "fpr_ci95": [
+            0.0015518556677390394,
+            0.007363660537746309
+          ]
+        },
+        {
+          "group": "creative_writing",
+          "n_positive": 0,
+          "n_negative": 709,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.005388938554512995
+          ]
+        },
+        {
+          "group": "general_qa",
+          "n_positive": 0,
+          "n_negative": 2191,
+          "fpr": 0.00045641259698767686,
+          "fpr_ci95": [
+            8.057257440988175e-05,
+            0.0025808765235276012
+          ]
+        },
+        {
+          "group": "information_extraction",
+          "n_positive": 0,
+          "n_negative": 1506,
+          "fpr": 0.004648074369189907,
+          "fpr_ci95": [
+            0.002253333649679256,
+            0.009563442685651818
+          ]
+        },
+        {
+          "group": "open_qa",
+          "n_positive": 0,
+          "n_negative": 3742,
+          "fpr": 0.0018706574024585784,
+          "fpr_ci95": [
+            0.0009064489237300909,
+            0.0038565553349475218
+          ]
+        },
+        {
+          "group": "summarization",
+          "n_positive": 0,
+          "n_negative": 1188,
+          "fpr": 0.003367003367003367,
+          "fpr_ci95": [
+            0.001310117166667553,
+            0.008625314037757102
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "dolly-context",
+      "surface": "tool_result",
+      "dataset": "dolly15k",
+      "dataset_files": [
+        {
+          "name": "databricks-dolly-15k.jsonl",
+          "sha256": "2df9083338b4abd6bceb5635764dab5d833b393b55759dffb0959b6fcbf794ec",
+          "size_bytes": 13085339,
+          "url": "https://huggingface.co/datasets/databricks/databricks-dolly-15k/resolve/bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a/databricks-dolly-15k.jsonl"
+        }
+      ],
+      "dataset_sha256": "5cd0719e3cbdcf251f9f836de0bbc931a755a54a0794589e5d082244923f0c3e",
+      "construction": "The non-empty `context` field of every record in databricks-dolly-15k.jsonl — a real retrieved passage — scanned via Engine.scan_tool_result.",
+      "what_this_measures": "False positives on benign retrieved content. Reported separately from dolly-prompt because the tool-result surface runs the directive pattern set and the context-mismatch scorer in addition to the rule pass; the two numbers are not interchangeable. Attribution: databricks-dolly-15k, Databricks, CC BY-SA 3.0.",
+      "caveat": null,
+      "fpr_companion": null,
+      "n": 4467,
+      "n_positive": 0,
+      "n_negative": 4467,
+      "true_positive": 0,
+      "false_negative": 0,
+      "false_positive": 64,
+      "true_negative": 4403,
+      "engine_errors": 0,
+      "recall": null,
+      "recall_ci95": null,
+      "fpr": 0.014327289008282965,
+      "fpr_ci95": [
+        0.01123629640318283,
+        0.018252885898412556
+      ],
+      "precision": null,
+      "precision_ci95": null,
+      "latency_ms": {
+        "n_scans": 4467.0,
+        "mean": 4.587237300883569,
+        "p50": 2.7570410020416602,
+        "p95": 13.68654199904995,
+        "p99": 30.429291000473313,
+        "max": 105.98899999968125
+      },
+      "total_seconds": 20.493164292001893,
+      "groups": [
+        {
+          "group": "closed_qa",
+          "n_positive": 0,
+          "n_negative": 1773,
+          "fpr": 0.014664410603496898,
+          "fpr_ci95": [
+            0.010026866577863235,
+            0.0214005061590137
+          ]
+        },
+        {
+          "group": "information_extraction",
+          "n_positive": 0,
+          "n_negative": 1506,
+          "fpr": 0.013944223107569721,
+          "fpr_ci95": [
+            0.009138317437783601,
+            0.02122345237114716
+          ]
+        },
+        {
+          "group": "summarization",
+          "n_positive": 0,
+          "n_negative": 1188,
+          "fpr": 0.01430976430976431,
+          "fpr_ci95": [
+            0.008953297303939142,
+            0.022797115924794796
+          ]
+        }
+      ]
+    }
+  ]
+}

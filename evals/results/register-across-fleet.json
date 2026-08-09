@@ -1,0 +1,74 @@
+[
+  {
+    "model": "protectai/deberta-v3-base-prompt-injection-v2",
+    "sys": 0.9994338631629944,
+    "human": 1.2861730397162318e-06,
+    "neutral": 0.00013983213119672655,
+    "inj": 0.9999997019767761,
+    "splits": 5,
+    "n_pairs": 5
+  },
+  {
+    "model": "protectai/deberta-v3-base-prompt-injection",
+    "sys": 0.19808805960928452,
+    "human": 1.3135991423496306e-07,
+    "neutral": 1.3135997178892467e-07,
+    "inj": 0.9999994039535522,
+    "splits": 1,
+    "n_pairs": 5
+  },
+  {
+    "model": "fmops/distilbert-prompt-injection",
+    "sys": 0.33809235142543914,
+    "human": 0.025395838986150922,
+    "neutral": 0.006387239132891409,
+    "inj": 0.9968036413192749,
+    "splits": 2,
+    "n_pairs": 5
+  },
+  {
+    "model": "proventra/mdeberta-v3-base-prompt-injection",
+    "sys": 0.00018832882051356137,
+    "human": 0.00016511713329236954,
+    "neutral": 0.00015927335334708914,
+    "inj": 0.9992135167121887,
+    "splits": 0,
+    "n_pairs": 5
+  },
+  {
+    "model": "testsavantai/prompt-injection-defender-base-v0",
+    "sys": 0.9108460307121277,
+    "human": 0.004214183078147471,
+    "neutral": 0.00678535143379122,
+    "inj": 0.800011396408081,
+    "splits": 5,
+    "n_pairs": 5
+  },
+  {
+    "model": "testsavantai/prompt-injection-defender-large-v0",
+    "sys": 0.03077862967038527,
+    "human": 8.80628119375615e-05,
+    "neutral": 0.00017234963411283388,
+    "inj": 0.9820818305015564,
+    "splits": 0,
+    "n_pairs": 5
+  },
+  {
+    "model": "tihilya/modernbert-base-prompt-injection-detection",
+    "sys": 0.08673987127840518,
+    "human": 1.0786667780848802e-05,
+    "neutral": 6.438625575810875e-06,
+    "inj": 0.5003732629993465,
+    "splits": 0,
+    "n_pairs": 5
+  },
+  {
+    "model": "devndeploy/bert-prompt-injection-detector",
+    "sys": 0.000756041839485988,
+    "human": 0.20090512611204758,
+    "neutral": 0.0012066914205206558,
+    "inj": 0.5003515353891999,
+    "splits": 0,
+    "n_pairs": 5
+  }
+]

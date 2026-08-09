@@ -57,6 +57,7 @@ install its backing package:
 | `thicket` | `pip install open-thicket` |
 | `huggingface:<model>` | `pip install 'billhook[hf]'` |
 | `llm-guard:<scanner>` | `pip install llm-guard` |
+| `lakera:guard` | `BILLHOOK_LAKERA_API_KEY` in the environment |
 | `normalize+<spec>` | `pip install open-thicket` |
 
 Adding your own takes about thirty lines: satisfy the `Detector` protocol in
@@ -76,6 +77,25 @@ own README and limitations doc rather than hidden.
 
 If you find a way this harness flatters one tool over another, that's a bug and
 the most useful issue you could file.
+
+## Research built on it
+
+`evals/experiments/` holds worked examples of the harness in use: a study of
+where a deployed prompt-injection classifier
+(`protectai/deberta-v3-base-prompt-injection-v2`) over-fires, why, and what it
+costs at a real operating point. Each script prints one result and names what it
+establishes; `evals/experiments/README.md` records the exact scoring conditions,
+and `docs/FINDINGS-*.md` write the results up, including the retractions.
+
+```bash
+pip install -e ".[experiments]"
+python -m billhook.fetch --fetch bipia --fetch llmail-inject
+python evals/experiments/occlusion_triggers.py        # the single-word triggers
+python evals/experiments/trigger_label_association.py # where it learned them
+```
+
+These evaluate a third-party model, not open-thicket, so they do not bear on the
+conflict of interest above.
 
 ## License
 

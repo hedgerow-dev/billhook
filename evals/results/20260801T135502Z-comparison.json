@@ -1,0 +1,299 @@
+{
+  "generated": "2026-08-01T13:55:02.009529+00:00",
+  "git": {
+    "sha": "06f8826fb69ac4f58d4a140b597669eef6461292",
+    "branch": "main",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "capped": null,
+  "fpr_points": [
+    0.01,
+    0.05
+  ],
+  "unavailable": [],
+  "detectors": [
+    {
+      "name": "regex-floor",
+      "version": "10 patterns",
+      "kind": "deterministic",
+      "requires": "offline"
+    },
+    {
+      "name": "thicket",
+      "version": "0.1.0.dev0 (57 rules, sha256:8eede3f)",
+      "kind": "deterministic",
+      "requires": "offline"
+    },
+    {
+      "name": "huggingface:protectai/deberta-v3-base-prompt-injection-v2",
+      "version": "protectai/deberta-v3-base-prompt-injection-v2 (label=INJECTION)",
+      "kind": "classifier",
+      "requires": "model-download"
+    },
+    {
+      "name": "normalize+huggingface:protectai/deberta-v3-base-prompt-injection-v2",
+      "version": "protectai/deberta-v3-base-prompt-injection-v2 (label=INJECTION)",
+      "kind": "classifier",
+      "requires": "model-download"
+    }
+  ],
+  "runs": [
+    {
+      "detector": "regex-floor",
+      "suite": "bipia",
+      "n_positive": 3750,
+      "n_negative": 50,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        0.0,
+        0.0
+      ],
+      "matched": {
+        "0.01": 0.0,
+        "0.05": 0.0
+      }
+    },
+    {
+      "detector": "thicket",
+      "suite": "bipia",
+      "n_positive": 3750,
+      "n_negative": 50,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        0.09253333333333333,
+        0.04
+      ],
+      "matched": {
+        "0.01": 0.0,
+        "0.05": 0.0936
+      }
+    },
+    {
+      "detector": "huggingface:protectai/deberta-v3-base-prompt-injection-v2",
+      "suite": "bipia",
+      "n_positive": 3750,
+      "n_negative": 50,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        0.6112,
+        0.62
+      ],
+      "matched": {
+        "0.01": 0.010133333333333333,
+        "0.05": 0.021333333333333333
+      }
+    },
+    {
+      "detector": "normalize+huggingface:protectai/deberta-v3-base-prompt-injection-v2",
+      "suite": "bipia",
+      "n_positive": 3750,
+      "n_negative": 50,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        0.8368,
+        0.8
+      ],
+      "matched": {
+        "0.01": 0.012533333333333334,
+        "0.05": 0.04666666666666667
+      }
+    },
+    {
+      "detector": "regex-floor",
+      "suite": "injecagent-base",
+      "n_positive": 1054,
+      "n_negative": 17,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        0.0,
+        0.0
+      ],
+      "matched": {
+        "0.01": 0.0,
+        "0.05": 0.0
+      }
+    },
+    {
+      "detector": "thicket",
+      "suite": "injecagent-base",
+      "n_positive": 1054,
+      "n_negative": 17,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        0.33111954459203036,
+        0.058823529411764705
+      ],
+      "matched": {
+        "0.01": 0.14516129032258066,
+        "0.05": 0.14516129032258066
+      }
+    },
+    {
+      "detector": "huggingface:protectai/deberta-v3-base-prompt-injection-v2",
+      "suite": "injecagent-base",
+      "n_positive": 1054,
+      "n_negative": 17,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        0.6574952561669829,
+        0.5882352941176471
+      ],
+      "matched": {
+        "0.01": 0.1650853889943074,
+        "0.05": 0.1650853889943074
+      }
+    },
+    {
+      "detector": "normalize+huggingface:protectai/deberta-v3-base-prompt-injection-v2",
+      "suite": "injecagent-base",
+      "n_positive": 1054,
+      "n_negative": 17,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        0.8472485768500949,
+        0.6470588235294118
+      ],
+      "matched": {
+        "0.01": 0.09962049335863378,
+        "0.05": 0.09962049335863378
+      }
+    },
+    {
+      "detector": "regex-floor",
+      "suite": "notinject",
+      "n_positive": 0,
+      "n_negative": 339,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        null,
+        0.0
+      ],
+      "matched": {
+        "0.01": null,
+        "0.05": null
+      }
+    },
+    {
+      "detector": "thicket",
+      "suite": "notinject",
+      "n_positive": 0,
+      "n_negative": 339,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        null,
+        0.0
+      ],
+      "matched": {
+        "0.01": null,
+        "0.05": null
+      }
+    },
+    {
+      "detector": "huggingface:protectai/deberta-v3-base-prompt-injection-v2",
+      "suite": "notinject",
+      "n_positive": 0,
+      "n_negative": 339,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        null,
+        0.4336283185840708
+      ],
+      "matched": {
+        "0.01": null,
+        "0.05": null
+      }
+    },
+    {
+      "detector": "normalize+huggingface:protectai/deberta-v3-base-prompt-injection-v2",
+      "suite": "notinject",
+      "n_positive": 0,
+      "n_negative": 339,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        null,
+        0.4631268436578171
+      ],
+      "matched": {
+        "0.01": null,
+        "0.05": null
+      }
+    },
+    {
+      "detector": "regex-floor",
+      "suite": "dolly-context",
+      "n_positive": 0,
+      "n_negative": 4467,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        null,
+        0.004029550033579583
+      ],
+      "matched": {
+        "0.01": null,
+        "0.05": null
+      }
+    },
+    {
+      "detector": "thicket",
+      "suite": "dolly-context",
+      "n_positive": 0,
+      "n_negative": 4467,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        null,
+        0.014327289008282965
+      ],
+      "matched": {
+        "0.01": null,
+        "0.05": null
+      }
+    },
+    {
+      "detector": "huggingface:protectai/deberta-v3-base-prompt-injection-v2",
+      "suite": "dolly-context",
+      "n_positive": 0,
+      "n_negative": 4467,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        null,
+        0.006044325050369375
+      ],
+      "matched": {
+        "0.01": null,
+        "0.05": null
+      }
+    },
+    {
+      "detector": "normalize+huggingface:protectai/deberta-v3-base-prompt-injection-v2",
+      "suite": "dolly-context",
+      "n_positive": 0,
+      "n_negative": 4467,
+      "errors": 0,
+      "scoreless": false,
+      "default": [
+        null,
+        0.0167897918065816
+      ],
+      "matched": {
+        "0.01": null,
+        "0.05": null
+      }
+    }
+  ]
+}

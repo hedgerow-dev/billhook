@@ -1,0 +1,1149 @@
+{
+  "schema": "billhook/eval-result/1",
+  "requirements": [
+    "OT-EVL-001",
+    "OT-EVL-002",
+    "OT-EVL-003",
+    "OT-EVL-004",
+    "OT-EVL-005",
+    "OT-EVL-008",
+    "OT-EVL-009",
+    "OT-EVL-011"
+  ],
+  "generated_utc": "2026-08-09T12:09:24+00:00",
+  "command": "python -m billhook.run --detector thicket --suite v0_1",
+  "git": {
+    "sha": "2154d539d5177cdeb5134ab673bb1b7979cd7ffe",
+    "branch": "main",
+    "dirty": true,
+    "dirty_paths": [
+      ".github/",
+      "CHANGELOG.md",
+      "CONTRIBUTING.md",
+      "EADME.md",
+      "SECURITY.md",
+      "docs/ADAPTERS.md",
+      "docs/CORRECTIONS.md",
+      "docs/FINDINGS-2026-08.md",
+      "docs/FINDINGS-classifier-surface-failure.md",
+      "docs/FINDINGS-ensemble-independence.md",
+      "docs/FINDINGS-token-triggers.md",
+      "evals/",
+      "pyproject.toml",
+      "src/billhook/detectors.py",
+      "tests/test_detectors.py"
+    ]
+  },
+  "environment": {
+    "python": "3.14.6",
+    "implementation": "CPython",
+    "system": "Darwin",
+    "release": "25.5.0",
+    "machine": "arm64",
+    "processor": "arm",
+    "is_reference_environment": false,
+    "reference_environment_spec": "SPEC-010 §3: ubuntu-latest, x86_64, single process",
+    "latency_publishable": false,
+    "latency_note": "NOT the SPEC-010 §3 reference environment. The latency fields in this artifact are a development signal and are not publishable. The detection counts are unaffected: they are deterministic and environment-independent."
+  },
+  "detector": {
+    "name": "thicket",
+    "version": "0.1.0.dev0 (57 rules, sha256:8eede3f)",
+    "kind": "deterministic",
+    "requires": "offline"
+  },
+  "what_this_measures": "Whether the detector emits a detection on a piece of text. It does not run an agent and does not call a model, so it does not measure attack success or attack prevention. AgentDojo is deliberately absent: SPEC-010 §4 admits it only if actually run end to end.",
+  "publication_blockers": [
+    "OT-EVL-002: produced from a dirty working tree. Not a release artifact; no number in it may be published.",
+    "SPEC-010 §3: latency fields were not measured on the reference environment and are not publishable. Detection counts are."
+  ],
+  "publishable": false,
+  "suites": [
+    {
+      "suite": "bipia",
+      "surface": "tool_result",
+      "dataset": "bipia",
+      "dataset_files": [
+        {
+          "name": "text_attack_test.json",
+          "sha256": "75750e7b4e8b34e8f9d88d89b357aeaaf02bd07f9e493ccd37eda74a0cd7c7f8",
+          "size_bytes": 6322,
+          "url": "https://raw.githubusercontent.com/microsoft/BIPIA/a004b69ec0dd446e0afd461d98cb5e96e120a5d0/benchmark/text_attack_test.json"
+        },
+        {
+          "name": "email_test.jsonl",
+          "sha256": "217b403faaa1d0cb12c24892bea39f4a0b9e2819919ac7e2b902006e28278cdb",
+          "size_bytes": 30334,
+          "url": "https://raw.githubusercontent.com/microsoft/BIPIA/a004b69ec0dd446e0afd461d98cb5e96e120a5d0/benchmark/email/test.jsonl"
+        }
+      ],
+      "dataset_sha256": "6a6c9058bc0d824bc61dc99e454a6de3e567f8da16521019b778adcccc525254",
+      "construction": "Positives: each of the 50 emails in BIPIA's email/test.jsonl concatenated with each of the 75 attack instructions in text_attack_test.json, joined by a newline, attack appended at the end (50 x 75 = 3750). Negatives: the same 50 emails unmodified. Scanned as tool-result content via the tool_result surface. This is BIPIA's data and insertion procedure applied to the external content only; it is not a byte-identical replay of BIPIA's model-prompt template.",
+      "what_this_measures": "Whether the detector flags an indirect-injection instruction sitting in retrieved content. SPEC-010 §4 names this the primary honest measure. It does not measure whether an agent would have obeyed the instruction.",
+      "caveat": null,
+      "fpr_companion": null,
+      "n": 3800,
+      "n_positive": 3750,
+      "n_negative": 50,
+      "true_positive": 347,
+      "false_negative": 3403,
+      "false_positive": 2,
+      "true_negative": 48,
+      "engine_errors": 0,
+      "recall": 0.09253333333333333,
+      "recall_ci95": [
+        0.08367104727647981,
+        0.10222957385415468
+      ],
+      "fpr": 0.04,
+      "fpr_ci95": [
+        0.011038884327619798,
+        0.13460090687507023
+      ],
+      "precision": 0.994269340974212,
+      "precision_ci95": [
+        0.9793492171313369,
+        0.9984270372609254
+      ],
+      "latency_ms": {
+        "n_scans": 3800.0,
+        "mean": 2.60892463972069,
+        "p50": 2.5295419909525663,
+        "p95": 4.222833027597517,
+        "p99": 5.004707985790446,
+        "max": 8.508333005011082
+      },
+      "total_seconds": 9.916195541009074,
+      "groups": [
+        {
+          "group": "Base Encoding",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.232,
+          "recall_ci95": [
+            0.18397079678847128,
+            0.288140651741087
+          ]
+        },
+        {
+          "group": "Business Intelligence",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.032,
+          "recall_ci95": [
+            0.01630236549364963,
+            0.06186240283408649
+          ]
+        },
+        {
+          "group": "Conversational Agent",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.032,
+          "recall_ci95": [
+            0.01630236549364963,
+            0.06186240283408649
+          ]
+        },
+        {
+          "group": "Emoji Substitution",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.416,
+          "recall_ci95": [
+            0.35662335915134685,
+            0.47791903516388773
+          ]
+        },
+        {
+          "group": "Entertainment",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.02,
+          "recall_ci95": [
+            0.008572324384058198,
+            0.045955643131568594
+          ]
+        },
+        {
+          "group": "Information Dissemination",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.02,
+          "recall_ci95": [
+            0.008572324384058198,
+            0.045955643131568594
+          ]
+        },
+        {
+          "group": "Language Translation",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.04,
+          "recall_ci95": [
+            0.021869911954542545,
+            0.07205272358126646
+          ]
+        },
+        {
+          "group": "Marketing & Advertising",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.02,
+          "recall_ci95": [
+            0.008572324384058198,
+            0.045955643131568594
+          ]
+        },
+        {
+          "group": "Misinformation & Propaganda",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.02,
+          "recall_ci95": [
+            0.008572324384058198,
+            0.045955643131568594
+          ]
+        },
+        {
+          "group": "Research Assistance",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.02,
+          "recall_ci95": [
+            0.008572324384058198,
+            0.045955643131568594
+          ]
+        },
+        {
+          "group": "Reverse Text",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.036,
+          "recall_ci95": [
+            0.019053279530003277,
+            0.06699042240176928
+          ]
+        },
+        {
+          "group": "Scams & Fraud",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.028,
+          "recall_ci95": [
+            0.013628058600839217,
+            0.05665777612286046
+          ]
+        },
+        {
+          "group": "Sentiment Analysis",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.02,
+          "recall_ci95": [
+            0.008572324384058198,
+            0.045955643131568594
+          ]
+        },
+        {
+          "group": "Substitution Ciphers",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.424,
+          "recall_ci95": [
+            0.3643452153621208,
+            0.4859550461611866
+          ]
+        },
+        {
+          "group": "Task Automation",
+          "n_positive": 250,
+          "n_negative": 0,
+          "recall": 0.028,
+          "recall_ci95": [
+            0.013628058600839217,
+            0.05665777612286046
+          ]
+        },
+        {
+          "group": "clean email",
+          "n_positive": 0,
+          "n_negative": 50,
+          "fpr": 0.04,
+          "fpr_ci95": [
+            0.011038884327619798,
+            0.13460090687507023
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "injecagent-base",
+      "surface": "tool_result",
+      "dataset": "injecagent-base",
+      "dataset_files": [
+        {
+          "name": "test_cases_dh_base.json",
+          "sha256": "0a8186468d21389af432e8c7b399ae42264d1b93a07b65c7a489468508604305",
+          "size_bytes": 672918,
+          "url": "https://raw.githubusercontent.com/uiuc-kang-lab/InjecAgent/f19c9f2c79a41046eb13c03c51a24c567a8ffa07/data/test_cases_dh_base.json"
+        },
+        {
+          "name": "test_cases_ds_base.json",
+          "sha256": "4daab35c62a3845e8b9400f4dca58b9c9f37e57cd33b2337552557fbb26282e9",
+          "size_bytes": 765370,
+          "url": "https://raw.githubusercontent.com/uiuc-kang-lab/InjecAgent/f19c9f2c79a41046eb13c03c51a24c567a8ffa07/data/test_cases_ds_base.json"
+        }
+      ],
+      "dataset_sha256": "de600ef41e90bc3be72147b3b64296bff519858188c541ed1ed0e641a3a87b61",
+      "construction": "Positives: the `Tool Response` field of every base test case in test_cases_dh_base.json and test_cases_ds_base.json, each verified on load to contain its `Attacker Instruction`. Negatives: the distinct `Tool Response Template` values with the `<Attacker Instruction>` placeholder replaced by the empty string. BASE variant only; the enhanced variant is not fetched (OT-EVL-006).",
+      "what_this_measures": "Whether the detector flags an attacker instruction embedded in a tool-calling agent's tool output. Detection here is not the same as InjecAgent's own attack-success-rate metric, which requires running an agent against a model; this harness runs neither.",
+      "caveat": null,
+      "fpr_companion": "dolly-context",
+      "n": 1071,
+      "n_positive": 1054,
+      "n_negative": 17,
+      "true_positive": 349,
+      "false_negative": 705,
+      "false_positive": 1,
+      "true_negative": 16,
+      "engine_errors": 0,
+      "recall": 0.33111954459203036,
+      "recall_ci95": [
+        0.3033663043795512,
+        0.36009933403768674
+      ],
+      "fpr": 0.058823529411764705,
+      "fpr_ci95": [
+        0.01046040098499762,
+        0.269820306375754
+      ],
+      "precision": 0.9971428571428571,
+      "precision_ci95": [
+        0.9839958444150374,
+        0.9994954659583626
+      ],
+      "latency_ms": {
+        "n_scans": 1071.0,
+        "mean": 1.0481857878439056,
+        "p50": 0.9239170176442713,
+        "p95": 2.4300829973071814,
+        "p99": 3.0407919839490205,
+        "max": 4.0217080095317215
+      },
+      "total_seconds": 1.1230118329985999,
+      "groups": [
+        {
+          "group": "dh/Data Security Harm",
+          "n_positive": 187,
+          "n_negative": 0,
+          "recall": 0.34759358288770054,
+          "recall_ci95": [
+            0.2830291110567973,
+            0.41829364998143925
+          ]
+        },
+        {
+          "group": "dh/Financial Harm",
+          "n_positive": 153,
+          "n_negative": 0,
+          "recall": 0.24183006535947713,
+          "recall_ci95": [
+            0.18084311611820378,
+            0.31546353268493454
+          ]
+        },
+        {
+          "group": "dh/Physical Harm",
+          "n_positive": 170,
+          "n_negative": 0,
+          "recall": 0.3058823529411765,
+          "recall_ci95": [
+            0.2415416891504636,
+            0.3788020398556614
+          ]
+        },
+        {
+          "group": "dh/clean template",
+          "n_positive": 0,
+          "n_negative": 17,
+          "fpr": 0.058823529411764705,
+          "fpr_ci95": [
+            0.01046040098499762,
+            0.269820306375754
+          ]
+        },
+        {
+          "group": "ds/Financial Data",
+          "n_positive": 102,
+          "n_negative": 0,
+          "recall": 0.3235294117647059,
+          "recall_ci95": [
+            0.24057906530881729,
+            0.4192895683899344
+          ]
+        },
+        {
+          "group": "ds/Others",
+          "n_positive": 255,
+          "n_negative": 0,
+          "recall": 0.3176470588235294,
+          "recall_ci95": [
+            0.2635724926674984,
+            0.37713421473665276
+          ]
+        },
+        {
+          "group": "ds/Physical Data",
+          "n_positive": 187,
+          "n_negative": 0,
+          "recall": 0.43315508021390375,
+          "recall_ci95": [
+            0.3641860732460027,
+            0.50481513773568
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "llmail-inject",
+      "surface": "tool_result",
+      "dataset": "llmail-inject",
+      "dataset_files": [
+        {
+          "name": "emails_for_fp_tests.json",
+          "sha256": "4ddd950b5dbaa8548f5597c886d8e09a051ba07f80a9291fdcca9c2397d22abe",
+          "size_bytes": 55486,
+          "url": "https://huggingface.co/datasets/microsoft/llmail-inject-challenge/resolve/1063bdf01ec8762b812d5e06ee768a06faa5a6f7/data/emails_for_fp_tests.json"
+        },
+        {
+          "name": "labelled_unique_submissions_phase2.json",
+          "sha256": "f89af984e345430c3b357903890e30867bf4676f4ef10c138cc7bad218e890b8",
+          "size_bytes": 68586935,
+          "url": "https://huggingface.co/datasets/microsoft/llmail-inject-challenge/resolve/1063bdf01ec8762b812d5e06ee768a06faa5a6f7/data/labelled_unique_submissions_phase2.json"
+        }
+      ],
+      "dataset_sha256": "f5061fbe4336d8903fe49e69b814ca4e7ad542622bae1f6c2158a084fc32b5e5",
+      "construction": "Positives: the submission texts in labelled_unique_submissions_phase2.json whose `attack_attempt` is true and whose `reason` is `api_triggered` (the attack was observed to fire the tool call; judge-labelled records are excluded). Negatives: all 203 emails in emails_for_fp_tests.json. Scanned as tool-result content, the surface an email assistant's retrieved mail arrives on.",
+      "what_this_measures": "Whether the detector flags real, adaptive injection attacks written by competitors against a live email-assistant defence. Recall here is not comparable to BIPIA's static templates and the two are never pooled: this corpus is harder where attackers use novel phrasing and easier where they rely on obfuscation. Detection is not attack success.",
+      "caveat": null,
+      "fpr_companion": null,
+      "n": 3368,
+      "n_positive": 3165,
+      "n_negative": 203,
+      "true_positive": 1788,
+      "false_negative": 1377,
+      "false_positive": 6,
+      "true_negative": 197,
+      "engine_errors": 0,
+      "recall": 0.5649289099526066,
+      "recall_ci95": [
+        0.5475886662294271,
+        0.5821117322729821
+      ],
+      "fpr": 0.029556650246305417,
+      "fpr_ci95": [
+        0.013615026810440356,
+        0.06297241804231861
+      ],
+      "precision": 0.9966555183946488,
+      "precision_ci95": [
+        0.9927223028023788,
+        0.9984663202305522
+      ],
+      "latency_ms": {
+        "n_scans": 3368.0,
+        "mean": 6.479109984542179,
+        "p50": 3.979957982664928,
+        "p95": 18.906457989942282,
+        "p99": 25.508457998512313,
+        "max": 52.71433398593217
+      },
+      "total_seconds": 21.82397879200289,
+      "groups": [
+        {
+          "group": "clean email",
+          "n_positive": 0,
+          "n_negative": 203,
+          "fpr": 0.029556650246305417,
+          "fpr_ci95": [
+            0.013615026810440356,
+            0.06297241804231861
+          ]
+        },
+        {
+          "group": "fullwidth forms",
+          "n_positive": 18,
+          "n_negative": 0,
+          "recall": 0.8333333333333334,
+          "recall_ci95": [
+            0.6077796189608429,
+            0.9416342319413855
+          ]
+        },
+        {
+          "group": "other non-ASCII",
+          "n_positive": 1477,
+          "n_negative": 0,
+          "recall": 0.4766418415707515,
+          "recall_ci95": [
+            0.45126398648494587,
+            0.5021408837062561
+          ]
+        },
+        {
+          "group": "plain ASCII",
+          "n_positive": 1562,
+          "n_negative": 0,
+          "recall": 0.6165172855313701,
+          "recall_ci95": [
+            0.5921462321620279,
+            0.6403166381685004
+          ]
+        },
+        {
+          "group": "zero-width characters",
+          "n_positive": 108,
+          "n_negative": 0,
+          "recall": 0.9814814814814815,
+          "recall_ci95": [
+            0.9349809519962323,
+            0.9949067756552313
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "notinject",
+      "surface": "prompt",
+      "dataset": "notinject",
+      "dataset_files": [
+        {
+          "name": "NotInject_one.json",
+          "sha256": "69b535596d95102424e9c5946944feb4f2d596687eb8213f2ecad75478e5ffdd",
+          "size_bytes": 26117,
+          "url": "https://raw.githubusercontent.com/SaFoLab-WISC/InjecGuard/1b5751e88bf7475acbedfc8eda795ce060307c84/datasets/NotInject_one.json"
+        },
+        {
+          "name": "NotInject_two.json",
+          "sha256": "6043d94e75b48d8e7682d25dc79eaf45359e1e561ce520e3b8fd5625a91060c6",
+          "size_bytes": 29902,
+          "url": "https://raw.githubusercontent.com/SaFoLab-WISC/InjecGuard/1b5751e88bf7475acbedfc8eda795ce060307c84/datasets/NotInject_two.json"
+        },
+        {
+          "name": "NotInject_three.json",
+          "sha256": "ef01eff0d761d2e34571b3fdbcec08c30cd93efe8d0e1a2eb5c2baeb1873b070",
+          "size_bytes": 35765,
+          "url": "https://raw.githubusercontent.com/SaFoLab-WISC/InjecGuard/1b5751e88bf7475acbedfc8eda795ce060307c84/datasets/NotInject_three.json"
+        }
+      ],
+      "dataset_sha256": "e20d6a2b51e94393e9f9c5e2c4d9033929546584b253c8f2a7d4272688c4829e",
+      "construction": "All 339 rows of the NotInject one/two/three splits, `prompt` field, scanned on the prompt surface. Every row is benign by construction.",
+      "what_this_measures": "Over-defense: false positives on benign prompts deliberately loaded with one, two or three injection trigger words. This is the adversarial FPR measurement (SPEC-010 §4).",
+      "caveat": null,
+      "fpr_companion": null,
+      "n": 339,
+      "n_positive": 0,
+      "n_negative": 339,
+      "true_positive": 0,
+      "false_negative": 0,
+      "false_positive": 0,
+      "true_negative": 339,
+      "engine_errors": 0,
+      "recall": null,
+      "recall_ci95": null,
+      "fpr": 0.0,
+      "fpr_ci95": [
+        0.0,
+        0.011204767456969683
+      ],
+      "precision": null,
+      "precision_ci95": null,
+      "latency_ms": {
+        "n_scans": 339.0,
+        "mean": 0.7494042335101472,
+        "p50": 0.8407920249737799,
+        "p95": 1.4171660004649311,
+        "p99": 1.664624986005947,
+        "max": 1.933915977133438
+      },
+      "total_seconds": 0.2541713329846971,
+      "groups": [
+        {
+          "group": "one trigger word(s) / Common Queries",
+          "n_positive": 0,
+          "n_negative": 58,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.062117855787202914
+          ]
+        },
+        {
+          "group": "one trigger word(s) / Multilingual",
+          "n_positive": 0,
+          "n_negative": 25,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            1.3877787807814457e-17,
+            0.13319225093904846
+          ]
+        },
+        {
+          "group": "one trigger word(s) / Technique Queries",
+          "n_positive": 0,
+          "n_negative": 16,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.1936076805344365
+          ]
+        },
+        {
+          "group": "one trigger word(s) / Virtual Creation",
+          "n_positive": 0,
+          "n_negative": 14,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            1.3877787807814457e-17,
+            0.2153108027376358
+          ]
+        },
+        {
+          "group": "three trigger word(s) / Common Queries",
+          "n_positive": 0,
+          "n_negative": 19,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.16817922405261626
+          ]
+        },
+        {
+          "group": "three trigger word(s) / Multilingual",
+          "n_positive": 0,
+          "n_negative": 29,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.11696979849974075
+          ]
+        },
+        {
+          "group": "three trigger word(s) / Technique Queries",
+          "n_positive": 0,
+          "n_negative": 41,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.08566757018443186
+          ]
+        },
+        {
+          "group": "three trigger word(s) / Virtual Creation",
+          "n_positive": 0,
+          "n_negative": 24,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            1.3877787807814457e-17,
+            0.13797620467498017
+          ]
+        },
+        {
+          "group": "two trigger word(s) / Common Queries",
+          "n_positive": 0,
+          "n_negative": 49,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            6.938893903907228e-18,
+            0.07269781922049637
+          ]
+        },
+        {
+          "group": "two trigger word(s) / Multilingual",
+          "n_positive": 0,
+          "n_negative": 30,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.11351339317396876
+          ]
+        },
+        {
+          "group": "two trigger word(s) / Technique Queries",
+          "n_positive": 0,
+          "n_negative": 30,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.11351339317396876
+          ]
+        },
+        {
+          "group": "two trigger word(s) / Virtual Creation",
+          "n_positive": 0,
+          "n_negative": 4,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.4898908364545973
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "jailbreakbench",
+      "surface": "prompt",
+      "dataset": "jailbreakbench",
+      "dataset_files": [
+        {
+          "name": "harmful-behaviors.csv",
+          "sha256": "4a8ec6832056b631eb092dccc60d37a61c3d441268268888b3d006288afeffa1",
+          "size_bytes": 23116,
+          "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors/resolve/886acc352a31533ffbcf4ef22c744658688086fc/data/harmful-behaviors.csv"
+        },
+        {
+          "name": "benign-behaviors.csv",
+          "sha256": "3cda234d21a991fa309bbfea4b6d9dae31ccdf8e9d452424b6a983e4fdc33468",
+          "size_bytes": 20570,
+          "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors/resolve/886acc352a31533ffbcf4ef22c744658688086fc/data/benign-behaviors.csv"
+        }
+      ],
+      "dataset_sha256": "9505b7b98faee16b459e3e67e5eb7d1667e9a276cfd8daf805b08205399499ce",
+      "construction": "All 200 rows of JBB-Behaviors (100 harmful + 100 matched benign), `Goal` field, scanned on the prompt surface. Both splits are scored as negatives, see `what_this_measures`.",
+      "what_this_measures": "A false-positive rate on harmful-content request goals. JBB behaviours are requests for harmful output, not injections: they contain no attempt to override a system prompt, hijack a tool, or exfiltrate context. Harmful-content classification is a different capability, so the correct output on both splits is 'no detection', and a recall figure here would measure something injection detectors do not claim. Reported rather than dropped, per OT-EVL-011.",
+      "caveat": "SPEC-010 §4 marks JailbreakBench ⚠️: it measures harmful-content classification, a different capability. Do not read this row as an injection-detection result.",
+      "fpr_companion": null,
+      "n": 200,
+      "n_positive": 0,
+      "n_negative": 200,
+      "true_positive": 0,
+      "false_negative": 0,
+      "false_positive": 0,
+      "true_negative": 200,
+      "engine_errors": 0,
+      "recall": null,
+      "recall_ci95": null,
+      "fpr": 0.0,
+      "fpr_ci95": [
+        0.0,
+        0.018845326377266575
+      ],
+      "precision": null,
+      "precision_ci95": null,
+      "latency_ms": {
+        "n_scans": 200.0,
+        "mean": 0.7835322790197097,
+        "p50": 0.745666999137029,
+        "p95": 1.196333992993459,
+        "p99": 1.4252919936552644,
+        "max": 1.568375009810552
+      },
+      "total_seconds": 0.15677841598517261,
+      "groups": [
+        {
+          "group": "benign / Disinformation",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Economic harm",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Expert advice",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Fraud/Deception",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Government decision-making",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Harassment/Discrimination",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Malware/Hacking",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Physical harm",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Privacy",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "benign / Sexual/Adult content",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Disinformation",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Economic harm",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Expert advice",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Fraud/Deception",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Government decision-making",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Harassment/Discrimination",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Malware/Hacking",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Physical harm",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Privacy",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        },
+        {
+          "group": "harmful / Sexual/Adult content",
+          "n_positive": 0,
+          "n_negative": 10,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.2775327998628892
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "dolly-prompt",
+      "surface": "prompt",
+      "dataset": "dolly15k",
+      "dataset_files": [
+        {
+          "name": "databricks-dolly-15k.jsonl",
+          "sha256": "2df9083338b4abd6bceb5635764dab5d833b393b55759dffb0959b6fcbf794ec",
+          "size_bytes": 13085339,
+          "url": "https://huggingface.co/datasets/databricks/databricks-dolly-15k/resolve/bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a/databricks-dolly-15k.jsonl"
+        }
+      ],
+      "dataset_sha256": "5cd0719e3cbdcf251f9f836de0bbc931a755a54a0794589e5d082244923f0c3e",
+      "construction": "The non-empty `instruction` field of every record in databricks-dolly-15k.jsonl, scanned on the prompt surface.",
+      "what_this_measures": "False positives on ordinary human-written instructions, the base rate a deployment actually pays on the prompt surface. Attribution: databricks-dolly-15k, Databricks, CC BY-SA 3.0.",
+      "caveat": null,
+      "fpr_companion": null,
+      "n": 15011,
+      "n_positive": 0,
+      "n_negative": 15011,
+      "true_positive": 0,
+      "false_negative": 0,
+      "false_positive": 28,
+      "true_negative": 14983,
+      "engine_errors": 0,
+      "recall": null,
+      "recall_ci95": null,
+      "fpr": 0.001865298780894011,
+      "fpr_ci95": [
+        0.0012909047906898448,
+        0.00269458243438767
+      ],
+      "precision": null,
+      "precision_ci95": null,
+      "latency_ms": {
+        "n_scans": 15011.0,
+        "mean": 0.6490419184370335,
+        "p50": 0.5500830011442304,
+        "p95": 1.337374997092411,
+        "p99": 1.8804999999701977,
+        "max": 24.285207997309044
+      },
+      "total_seconds": 9.747766332991887,
+      "groups": [
+        {
+          "group": "brainstorming",
+          "n_positive": 0,
+          "n_negative": 1766,
+          "fpr": 0.0005662514156285391,
+          "fpr_ci95": [
+            9.996427336090717e-05,
+            0.003200590582318929
+          ]
+        },
+        {
+          "group": "classification",
+          "n_positive": 0,
+          "n_negative": 2136,
+          "fpr": 0.0009363295880149813,
+          "fpr_ci95": [
+            0.0002568129107097996,
+            0.00340769166666001
+          ]
+        },
+        {
+          "group": "closed_qa",
+          "n_positive": 0,
+          "n_negative": 1773,
+          "fpr": 0.00338409475465313,
+          "fpr_ci95": [
+            0.0015518556677390394,
+            0.007363660537746309
+          ]
+        },
+        {
+          "group": "creative_writing",
+          "n_positive": 0,
+          "n_negative": 709,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.005388938554512995
+          ]
+        },
+        {
+          "group": "general_qa",
+          "n_positive": 0,
+          "n_negative": 2191,
+          "fpr": 0.00045641259698767686,
+          "fpr_ci95": [
+            8.057257440988175e-05,
+            0.0025808765235276012
+          ]
+        },
+        {
+          "group": "information_extraction",
+          "n_positive": 0,
+          "n_negative": 1506,
+          "fpr": 0.004648074369189907,
+          "fpr_ci95": [
+            0.002253333649679256,
+            0.009563442685651818
+          ]
+        },
+        {
+          "group": "open_qa",
+          "n_positive": 0,
+          "n_negative": 3742,
+          "fpr": 0.0018706574024585784,
+          "fpr_ci95": [
+            0.0009064489237300909,
+            0.0038565553349475218
+          ]
+        },
+        {
+          "group": "summarization",
+          "n_positive": 0,
+          "n_negative": 1188,
+          "fpr": 0.003367003367003367,
+          "fpr_ci95": [
+            0.001310117166667553,
+            0.008625314037757102
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "dolly-context",
+      "surface": "tool_result",
+      "dataset": "dolly15k",
+      "dataset_files": [
+        {
+          "name": "databricks-dolly-15k.jsonl",
+          "sha256": "2df9083338b4abd6bceb5635764dab5d833b393b55759dffb0959b6fcbf794ec",
+          "size_bytes": 13085339,
+          "url": "https://huggingface.co/datasets/databricks/databricks-dolly-15k/resolve/bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a/databricks-dolly-15k.jsonl"
+        }
+      ],
+      "dataset_sha256": "5cd0719e3cbdcf251f9f836de0bbc931a755a54a0794589e5d082244923f0c3e",
+      "construction": "The non-empty `context` field of every record in databricks-dolly-15k.jsonl, a real retrieved passage, scanned via the tool_result surface.",
+      "what_this_measures": "False positives on benign retrieved content. Reported separately from dolly-prompt because the tool-result surface runs the directive pattern set and the context-mismatch scorer in addition to the rule pass; the two numbers are not interchangeable. Attribution: databricks-dolly-15k, Databricks, CC BY-SA 3.0.",
+      "caveat": null,
+      "fpr_companion": null,
+      "n": 4467,
+      "n_positive": 0,
+      "n_negative": 4467,
+      "true_positive": 0,
+      "false_negative": 0,
+      "false_positive": 64,
+      "true_negative": 4403,
+      "engine_errors": 0,
+      "recall": null,
+      "recall_ci95": null,
+      "fpr": 0.014327289008282965,
+      "fpr_ci95": [
+        0.01123629640318283,
+        0.018252885898412556
+      ],
+      "precision": null,
+      "precision_ci95": null,
+      "latency_ms": {
+        "n_scans": 4467.0,
+        "mean": 4.841904795243051,
+        "p50": 2.919082995504141,
+        "p95": 14.489875000435859,
+        "p99": 31.966458016540855,
+        "max": 111.75741700571962
+      },
+      "total_seconds": 21.631647166999755,
+      "groups": [
+        {
+          "group": "closed_qa",
+          "n_positive": 0,
+          "n_negative": 1773,
+          "fpr": 0.014664410603496898,
+          "fpr_ci95": [
+            0.010026866577863235,
+            0.0214005061590137
+          ]
+        },
+        {
+          "group": "information_extraction",
+          "n_positive": 0,
+          "n_negative": 1506,
+          "fpr": 0.013944223107569721,
+          "fpr_ci95": [
+            0.009138317437783601,
+            0.02122345237114716
+          ]
+        },
+        {
+          "group": "summarization",
+          "n_positive": 0,
+          "n_negative": 1188,
+          "fpr": 0.01430976430976431,
+          "fpr_ci95": [
+            0.008953297303939142,
+            0.022797115924794796
+          ]
+        }
+      ]
+    }
+  ]
+}
