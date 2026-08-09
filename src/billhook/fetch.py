@@ -304,6 +304,51 @@ DATASETS: dict[str, Dataset] = {
             ),
         ),
     ),
+    "llmail-inject": Dataset(
+        name="llmail-inject",
+        homepage="https://huggingface.co/datasets/microsoft/llmail-inject-challenge",
+        applies=(
+            "A second email surface, and the only adaptive one available. The benign "
+            "half is business email sourced independently of BIPIA, which is what "
+            "lets a result separate a benign SUBGROUP effect from a property of email "
+            "in general. The attack half was written by people adapting to live "
+            "defences, so recall on it is not comparable to recall on BIPIA's static "
+            "strings and must not be pooled with it."
+        ),
+        licence="MIT",
+        notes=(
+            "Pinned at revision 1063bdf01ec8762b812d5e06ee768a06faa5a6f7. Only two "
+            "of the eleven published files are pinned here: the false-positive email "
+            "set, and the phase-2 labelled submissions. The phase-1 file (448 MB) and "
+            "the raw submission logs (1.7 GB) are not fetched, no result needs them. "
+            "Score only records whose `reason` is `api_triggered`: those attacks "
+            "actually fired the tool call, whereas the rest carry an LLM judge's "
+            "label. The attack text is adversarial by construction and is input to a "
+            "classifier, never to an agent."
+        ),
+        files=(
+            PinnedFile(
+                url=(
+                    "https://huggingface.co/datasets/microsoft/llmail-inject-challenge/"
+                    "resolve/1063bdf01ec8762b812d5e06ee768a06faa5a6f7/"
+                    "data/emails_for_fp_tests.json"
+                ),
+                name="emails_for_fp_tests.json",
+                sha256="4ddd950b5dbaa8548f5597c886d8e09a051ba07f80a9291fdcca9c2397d22abe",
+                size_bytes=55486,
+            ),
+            PinnedFile(
+                url=(
+                    "https://huggingface.co/datasets/microsoft/llmail-inject-challenge/"
+                    "resolve/1063bdf01ec8762b812d5e06ee768a06faa5a6f7/"
+                    "data/labelled_unique_submissions_phase2.json"
+                ),
+                name="labelled_unique_submissions_phase2.json",
+                sha256="f89af984e345430c3b357903890e30867bf4676f4ef10c138cc7bad218e890b8",
+                size_bytes=68586935,
+            ),
+        ),
+    ),
     "agentdojo": Dataset(
         name="agentdojo",
         homepage="https://github.com/ethz-spylab/agentdojo",
