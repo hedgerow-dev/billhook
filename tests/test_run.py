@@ -361,11 +361,11 @@ def test_git_state_treats_untracked_files_as_dirty() -> None:
 
 
 def test_latency_is_marked_unpublishable_off_the_reference_environment(monkeypatch) -> None:
-    """OT-ENG-019 vs OT-EVL-009: the mandatory field is not always a publishable one."""
+    """SPEC-010 §3 vs OT-EVL-009: the mandatory field is not always a publishable one."""
     monkeypatch.setattr(er, "_env_flag", lambda name: "")
     artifact = _artifact(monkeypatch, dirty=False)
     assert artifact["environment"]["latency_publishable"] is False
-    assert any("OT-ENG-019" in b for b in artifact["publication_blockers"])
+    assert any("SPEC-010 §3" in b for b in artifact["publication_blockers"])
 
 
 def test_artifact_contains_no_evaluation_sample_text(monkeypatch, detector: Detector) -> None:

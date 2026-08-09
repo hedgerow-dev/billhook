@@ -545,8 +545,7 @@ def score(samples: Sequence[Sample], detector: Detector, surface: str) -> SuiteR
     figure, so it includes the dispatch a caller actually pays. These are
     *suite* latencies over heterogeneous input sizes, useful as a distribution,
     not comparable to the fixed-size figures in `evals/bench.py`, and not
-    publishable off the SPEC-003 §6.1 reference environment either way
-    (OT-ENG-019).
+    publishable off the reference environment either way (SPEC-010 §3).
     """
     result = SuiteResult(suite="", surface=surface, dataset="")
     timings: list[float] = []
@@ -679,12 +678,15 @@ def _dataset_files(name: str, root: Path) -> tuple[list[dict[str, Any]], str]:
 def _environment() -> dict[str, Any]:
     """Machine identity, plus a flat statement about whether latency is publishable.
 
-    SPEC-003 §6.1 fixes the reference environment as the project's CI runner
-    (`ubuntu-latest`, x86_64). OT-ENG-019 makes a latency number measured
-    anywhere else a development signal only. Since OT-EVL-009 *requires* latency
-    in every artifact, every artifact produced off the runner necessarily
-    carries a mandatory field that is simultaneously unpublishable, so it is
-    labelled rather than left for a reader to infer.
+SPEC-010 §3 fixes the reference environment as this project's CI runner
+    (`ubuntu-latest`, x86_64), mirroring open-thicket's OT-ENG-019: a latency
+    number measured anywhere else is a development signal only. Since
+    OT-EVL-009 *requires* latency in every artifact, every artifact produced off
+    the runner necessarily carries a mandatory field that is simultaneously
+    unpublishable, so it is labelled rather than left for a reader to infer.
+
+    Detection counts are unaffected. They are deterministic for a deterministic
+    detector and do not depend on the machine.
     """
     on_ci = bool(_env_flag("CI")) and bool(_env_flag("GITHUB_ACTIONS"))
     is_linux_x86 = platform.system() == "Linux" and platform.machine() in ("x86_64", "AMD64")
@@ -697,13 +699,13 @@ def _environment() -> dict[str, Any]:
         "machine": platform.machine(),
         "processor": platform.processor() or "unknown",
         "is_reference_environment": reference,
-        "reference_environment_spec": "SPEC-003 §6.1: ubuntu-latest, x86_64, single process",
+        "reference_environment_spec": "SPEC-010 §3: ubuntu-latest, x86_64, single process",
         "latency_publishable": reference,
         "latency_note": (
-            "Measured on the SPEC-003 §6.1 reference environment."
+            "Measured on the SPEC-010 §3 reference environment."
             if reference
             else (
-                "NOT the SPEC-003 §6.1 reference environment. Under OT-ENG-019 the "
+                "NOT the SPEC-010 §3 reference environment. The "
                 "latency fields in this artifact are a development signal and are not "
                 "publishable. The detection counts are unaffected: they are "
                 "deterministic and environment-independent."
@@ -742,8 +744,8 @@ def build_artifact(
         )
     if not environment["latency_publishable"]:
         blockers.append(
-            "OT-ENG-019: latency fields were not measured on the SPEC-003 §6.1 "
-            "reference environment and are not publishable. Detection counts are."
+            "SPEC-010 §3: latency fields were not measured on the reference "
+            "environment and are not publishable. Detection counts are."
         )
     return {
         "schema": ARTIFACT_SCHEMA,
@@ -887,8 +889,8 @@ def render_markdown(artifact: dict[str, Any]) -> str:
     add(artifact["environment"]["latency_note"])
     add("")
     add("These are per-scan wall times over each suite's own heterogeneous input "
-        "sizes. They are a distribution, not a fixed-size measurement; SPEC-003 "
-        "§6.1's controlled figures come from `evals/bench.py`.")
+        "sizes. They are a distribution, not a fixed-size measurement, and are not "
+        "comparable to a controlled same-input benchmark.")
     add("")
     add("| Suite | scans | mean | p50 | p95 | p99 | max |")
     add("|---|---:|---:|---:|---:|---:|---:|")
