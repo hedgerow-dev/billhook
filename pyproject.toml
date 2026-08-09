@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "billhook"
+version = "0.1.0.dev0"
+description = "An independent harness for comparing prompt-injection defenses at a matched false-positive rate."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Hedgerow BV" }]
+keywords = ["llm", "security", "prompt-injection", "guardrails", "benchmark", "evaluation"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+  "Typing :: Typed",
+]
+
+# Deliberately empty. A referee that cannot start without one of the tools it
+# scores is not a referee, so every detector adapter is an optional extra and a
+# missing one is reported as AdapterUnavailable, never as an import error.
+dependencies = []
+
+[project.optional-dependencies]
+# Adapters. Each is lazy-imported; `import billhook` must pull none of them.
+thicket = ["open-thicket>=0.1"]
+hf = ["torch>=2.0", "transformers>=4.40", "sentencepiece>=0.2"]
+llm-guard = ["llm-guard>=0.3"]
+dev = [
+  "pytest>=8",
+  "ruff>=0.6",
+  "mypy>=1.11",
+]
+
+[project.urls]
+Homepage = "https://github.com/hedgerow-dev/billhook"
+Issues = "https://github.com/hedgerow-dev/billhook/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "SIM", "UP"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unreachable = true
+
+# Every detector adapter's backing package is an optional extra, so none of them
+# is importable in the default dev environment. That is the intended state, not
+# a missing dependency.
+[[tool.mypy.overrides]]
+module = [
+  "thicket", "thicket.*",
+  "torch", "torch.*",
+  "transformers", "transformers.*",
+  "llm_guard", "llm_guard.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
