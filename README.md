@@ -63,21 +63,6 @@ install its backing package:
 Adding your own takes about thirty lines: satisfy the `Detector` protocol in
 [detectors.py](src/billhook/detectors.py) and register it in `load()`.
 
-## Who makes this
-
-billhook is built by [Hedgerow](https://hedgerow.dev), which also makes
-open-thicket, a deterministic injection detector that this harness scores as
-`thicket`. That is a conflict of interest and worth stating plainly rather than
-burying.
-
-Two things keep it honest. open-thicket is not in the default comparison and has
-to be asked for by name, so no result here quietly favours it. And its measured
-recall is poor, which came out of this harness and is published in open-thicket's
-own README and limitations doc rather than hidden.
-
-If you find a way this harness flatters one tool over another, that's a bug and
-the most useful issue you could file.
-
 ## Research built on it
 
 `evals/experiments/` holds worked examples of the harness in use: a study of
@@ -93,9 +78,6 @@ python -m billhook.fetch --fetch bipia --fetch llmail-inject
 python evals/experiments/occlusion_triggers.py        # the single-word triggers
 python evals/experiments/trigger_label_association.py # where it learned them
 ```
-
-These evaluate a third-party model, not open-thicket, so they do not bear on the
-conflict of interest above.
 
 ## License
 
