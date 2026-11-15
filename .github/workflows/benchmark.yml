@@ -1,8 +1,7 @@
 name: benchmark
 
 on:
-  schedule:
-    - cron: "0 6 * * 0" # Sunday 06:00 UTC
+  # Run by hand before each release (SPEC-010 release latency run).
   workflow_dispatch:
 
 permissions:
