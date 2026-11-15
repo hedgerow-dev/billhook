@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   benchmark:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,13 +39,45 @@ jobs:
           --fetch jailbreakbench
           --fetch dolly15k
 
-      # --release refuses a dirty tree, so the runs must precede any step that
-      # modifies files, including the commit-back below.
+      # --release refuses a dirty tree (OT-EVL-002, OT-BCH-007), and the check
+      # runs before scoring. The benchmark writes evals/results/ on success, so
+      # the comparison was scoring a dirty checkout and every scheduled run
+      # failed. Park those artifacts outside the worktree, compare the same
+      # pristine checkout, then put them back for the upload and commit below.
       - name: Run benchmark
         run: python -m billhook.run --suite v0_1 --detector regex-floor --release
 
+      - name: Park benchmark artifacts
+        run: |
+          mkdir -p "$RUNNER_TEMP/parked-results"
+          count=0
+          while IFS= read -r -d '' path; do
+            [ -n "$path" ] || continue
+            mkdir -p "$RUNNER_TEMP/parked-results/$(dirname "$path")"
+            mv "$path" "$RUNNER_TEMP/parked-results/$path"
+            count=$((count + 1))
+          done < <(git ls-files --others --exclude-standard -z -- evals/results)
+          if [ "$count" -eq 0 ]; then
+            echo "benchmark --release wrote no untracked files under evals/results" >&2
+            exit 1
+          fi
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "worktree still dirty after parking benchmark artifacts:" >&2
+            git status --porcelain >&2
+            exit 1
+          fi
+
       - name: Run comparison
         run: python -m billhook.compare --suite v0_1 --detector regex-floor --release
+
+      - name: Restore benchmark artifacts
+        run: |
+          shopt -s nullglob
+          parked=("$RUNNER_TEMP/parked-results/evals/results/"*)
+          if ((${#parked[@]})); then
+            mkdir -p evals/results
+            mv "${parked[@]}" evals/results/
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
